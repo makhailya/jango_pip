@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Интернет-магазин{% endblock %}</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+
+    <style>
+        .sidebar {
+            min-height: 100vh;
+            background-color: #212529;
+            color: white;
+        }
+
+        .sidebar .nav-link {
+            color: rgba(255, 255, 255, 0.8);
+            padding: 0.75rem 1rem;
+            border-radius: 0.25rem;
+            margin: 0.25rem 0;
+        }
+
+        .sidebar .nav-link:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+
+        .sidebar .nav-link.active {
+            background-color: #0d6efd;
+            color: white;
+        }
+
+        .user-section {
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+            padding-top: 1rem;
+            margin-top: auto;
+        }
+    </style>
+
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+
+<div class="container-fluid">
+    <div class="row">
+
+        <!-- БОКОВОЕ МЕНЮ -->
+        <div class="col-md-2 col-lg-2 sidebar p-3 d-flex flex-column">
+
+            <div class="mb-4">
+                <h4>
+                    <span class="badge bg-light text-dark">B</span>
+                    Меню
+                </h4>
+            </div>
+
+            <nav class="nav flex-column">
+                <a class="nav-link {% if request.resolver_match.url_name == 'home' %}active{% endif %}" href="{% url 'catalog:home' %}">
+                    <i class="bi bi-house-door"></i> Главная
+                </a>
+                <a class="nav-link {% if request.resolver_match.url_name == 'categories' %}active{% endif %}" href="#">
+                    <i class="bi bi-grid"></i> Категории
+                </a>
+                <a class="nav-link {% if request.resolver_match.url_name == 'orders' %}active{% endif %}" href="#">
+                    <i class="bi bi-cart"></i> Заказы
+                </a>
+                <a class="nav-link {% if request.resolver_match.url_name == 'contacts' %}active{% endif %}" href="{% url 'catalog:contacts' %}">
+                    <i class="bi bi-person"></i> Контакты
+                </a>
+            </nav>
+
+            <div class="user-section mt-auto">
+                <a class="nav-link" href="#">Профиль</a>
+                <a class="nav-link" href="#">Выход</a>
+                <div class="d-flex align-items-center mt-2">
+                    <img src="https://via.placeholder.com/32" class="rounded-circle me-2" alt="Аватар">
+                    <span>Пользователь</span>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- ОСНОВНОЙ КОНТЕНТ -->
+        <div class="col-md-10 col-lg-10 p-4">
+            {% block content %}
+            {% endblock %}
+        </div>
+
+    </div>
+</div>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+{% block extra_js %}{% endblock %}
+
+</body>
+</html>
