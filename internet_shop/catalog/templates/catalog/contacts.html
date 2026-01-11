@@ -1,0 +1,83 @@
+{% extends 'catalog/base.html' %}
+
+{% block title %}Контакты - Интернет-магазин{% endblock %}
+
+{% block content %}
+<!-- Заголовок -->
+<div class="mb-5">
+    <h1 class="display-4">Контакты</h1>
+</div>
+
+<div class="row">
+    
+    <!-- Левая колонка - Форма обратной связи -->
+    <div class="col-lg-6 mb-4">
+        <div class="card shadow-sm">
+            <div class="card-body p-4">
+                <form method="post">
+                    {% csrf_token %}
+                    
+                    <!-- Поле Имя -->
+                    <div class="mb-3">
+                        <label for="name" class="form-label">Имя</label>
+                        <input type="text" class="form-control" id="name" name="name" required>
+                    </div>
+                    
+                    <!-- Поле Почта -->
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Почта</label>
+                        <div class="input-group">
+                            <span class="input-group-text">@</span>
+                            <input type="email" class="form-control" id="email" name="email" required>
+                        </div>
+                    </div>
+                    
+                    <!-- Поле Сообщение -->
+                    <div class="mb-3">
+                        <label for="message" class="form-label">Сообщение</label>
+                        <textarea class="form-control" id="message" name="message" rows="5" required></textarea>
+                    </div>
+                    
+                    <!-- Кнопка отправки -->
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary">
+                            Отправить
+                        </button>
+                    </div>
+                </form>
+                
+                {% if form_submitted %}
+                <div class="alert alert-success mt-3" role="alert">
+                    <strong>Спасибо!</strong> Ваше сообщение отправлено.
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <!-- Правая колонка - Информация о контактах -->
+    <div class="col-lg-6">
+        <div class="card shadow-sm h-100">
+            <div class="card-body p-4">
+                <h3 class="card-title mb-4">Наши контакты</h3>
+                
+                <p class="card-text">
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod 
+                    tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim 
+                    veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea 
+                    commodo consequat. Duis aute irure dolor in reprehenderit in voluptate 
+                    velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat 
+                    cupidatat non prident, sunt in culpa qui officia deserunt mollit anim id 
+                    est laborum.
+                </p>
+                
+                <p class="card-text text-muted mt-3">
+                    While these feedback styles cannot be styled with CSS, you can still 
+                    customize the feedback text through JavaScript.
+                </p>
+            </div>
+        </div>
+    </div>
+    
+</div>
+{% endblock %}
