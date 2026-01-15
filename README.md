@@ -112,9 +112,64 @@ docs: обновлена документация
 style: форматирование кода
 ```
 
+## Первоначальная настройка
+
+1. Клонируй репозиторий:
+```bash
+git clone <url>
+cd internet_shop
+```
+
+2. Создай и активируй виртуальное окружение:
+```bash
+python -m venv venv
+source venv/bin/activate  # Mac/Linux
+venv\Scripts\activate     # Windows
+```
+
+3. Установи зависимости:
+```bash
+pip install -r requirements.txt
+```
+
+4. Создай файл .env на основе .env.sample:
+```bash
+cp .env.sample .env  # Mac/Linux
+copy .env.sample .env  # Windows
+```
+
+5. Отредактируй .env, указав свои настройки БД
+
+6. Создай базу данных в PostgreSQL:
+```sql
+CREATE DATABASE internet_shop_db;
+CREATE USER shop_user WITH PASSWORD 'your_password';
+GRANT ALL PRIVILEGES ON DATABASE internet_shop_db TO shop_user;
+```
+
+7. Примени миграции:
+```bash
+python manage.py migrate
+```
+
+8. Создай суперпользователя:
+```bash
+python manage.py createsuperuser
+```
+
+9. Загрузи тестовые данные:
+```bash
+python manage.py load_data
+```
+
+10. Запусти сервер:
+```bash
+python manage.py runserver
+```
+
 ## Автор
 
-Ваше имя
+makhailya
 
 ## Лицензия
 
