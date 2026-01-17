@@ -31,3 +31,5 @@ staticfiles/
 Thumbs.db
 *.bak
 *.tmp
+
+.env
