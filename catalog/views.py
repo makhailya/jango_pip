@@ -1,44 +1,54 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
+from .models import Product
 
 
 def home(request):
     """
     Контроллер главной страницы
-
-    Эта функция обрабатывает запрос на главную страницу
-    и возвращает отрендеренный HTML-шаблон
+    Отображает список всех продуктов из базы данных
     """
-    return render(request, 'catalog/home.html')
+    # Получаем все продукты из БД
+    products = Product.objects.all()
+
+    context = {
+        'products': products
+    }
+    return render(request, 'catalog/home.html', context)
+
+
+def product_detail(request, pk):
+    """
+    Контроллер страницы одного товара
+
+    Args:
+        pk (int): Primary key (ID) товара
+
+    Returns:
+        Отрендеренный шаблон с данными товара
+    """
+    # Получаем товар по ID или возвращаем 404
+    product = get_object_or_404(Product, pk=pk)
+
+    context = {
+        'product': product
+    }
+    return render(request, 'catalog/product_detail.html', context)
 
 
 def contacts(request):
     """
     Контроллер страницы контактов
-
-    Обрабатывает GET и POST запросы:
-    - GET: показывает форму
-    - POST: обрабатывает отправку формы
     """
-    # Проверяем, была ли отправлена форма (POST-запрос)
     if request.method == 'POST':
-        # Получаем данные из формы
         name = request.POST.get('name')
         email = request.POST.get('email')
         message = request.POST.get('message')
 
-        # Выводим данные в консоль (для проверки)
         print(f"Получено сообщение от {name} ({email}): {message}")
 
-        # Передаём флаг, что форма отправлена
         context = {
             'form_submitted': True
         }
         return render(request, 'catalog/contacts.html', context)
 
-    # Если обычный GET-запрос, просто показываем форму
     return render(request, 'catalog/contacts.html')
-
-
-from django.shortcuts import render
-
-# Create your views here.
