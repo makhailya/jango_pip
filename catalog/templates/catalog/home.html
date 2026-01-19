@@ -36,7 +36,7 @@
                         <!-- Описание (обрезанное до 100 символов) -->
                         <p class="card-text text-muted flex-grow-1">
                             {% if product.description %}
-                                {{ product.description|truncatewords:15 }}
+                                {{ product.description|truncatewords:100 }}
                             {% else %}
                                 Описание отсутствует
                             {% endif %}
