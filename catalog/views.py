@@ -1,54 +1,44 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render
+from django.views.generic import ListView, DetailView, TemplateView
 from .models import Product
 
 
-def home(request):
+class HomeView(ListView):
     """
     Контроллер главной страницы
-    Отображает список всех продуктов из базы данных
+    Отображает список всех продуктов
     """
-    # Получаем все продукты из БД
-    products = Product.objects.all()
-
-    context = {
-        'products': products
-    }
-    return render(request, 'catalog/home.html', context)
+    model = Product
+    template_name = 'catalog/home.html'
+    context_object_name = 'products'
 
 
-def product_detail(request, pk):
+class ProductDetailView(DetailView):
     """
     Контроллер страницы одного товара
-
-    Args:
-        pk (int): Primary key (ID) товара
-
-    Returns:
-        Отрендеренный шаблон с данными товара
     """
-    # Получаем товар по ID или возвращаем 404
-    product = get_object_or_404(Product, pk=pk)
-
-    context = {
-        'product': product
-    }
-    return render(request, 'catalog/product_detail.html', context)
+    model = Product
+    template_name = 'catalog/product_detail.html'
+    context_object_name = 'product'
 
 
-def contacts(request):
+class ContactsView(TemplateView):
     """
     Контроллер страницы контактов
     """
-    if request.method == 'POST':
+    template_name = 'catalog/contacts.html'
+
+    def post(self, request, *args, **kwargs):
+        """
+        Обработка POST-запроса (отправка формы)
+        """
         name = request.POST.get('name')
         email = request.POST.get('email')
         message = request.POST.get('message')
 
         print(f"Получено сообщение от {name} ({email}): {message}")
 
-        context = {
-            'form_submitted': True
-        }
-        return render(request, 'catalog/contacts.html', context)
-
-    return render(request, 'catalog/contacts.html')
+        # Добавляем контекст для отображения сообщения об успехе
+        context = self.get_context_data()
+        context['form_submitted'] = True
+        return self.render_to_response(context)

@@ -14,6 +14,9 @@
         <a class="nav-link {% if request.resolver_match.url_name == 'home' %}active{% endif %}" href="{% url 'catalog:home' %}">
             <i class="bi bi-house-door"></i> Главная
         </a>
+        <a class="nav-link {% if 'blog' in request.resolver_match.namespace %}active{% endif %}" href="{% url 'blog:list' %}">
+            <i class="bi bi-newspaper"></i> Блог
+        </a>
         <a class="nav-link {% if request.resolver_match.url_name == 'categories' %}active{% endif %}" href="#">
             <i class="bi bi-grid"></i> Категории
         </a>
