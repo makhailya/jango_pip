@@ -1,6 +1,8 @@
 from django.shortcuts import render
-from django.views.generic import ListView, DetailView, TemplateView
+from django.urls import reverse_lazy
+from django.views.generic import ListView, DetailView, TemplateView, CreateView, UpdateView, DeleteView
 from .models import Product
+from .forms import ProductForm
 
 
 class HomeView(ListView):
@@ -22,6 +24,41 @@ class ProductDetailView(DetailView):
     context_object_name = 'product'
 
 
+class ProductCreateView(CreateView):
+    """
+    Контроллер создания продукта
+    """
+    model = Product
+    form_class = ProductForm
+    template_name = 'catalog/product_form.html'
+    success_url = reverse_lazy('catalog:home')
+
+
+class ProductUpdateView(UpdateView):
+    """
+    Контроллер редактирования продукта
+    """
+    model = Product
+    form_class = ProductForm
+    template_name = 'catalog/product_form.html'
+
+    def get_success_url(self):
+        """
+        После редактирования перенаправляем на страницу просмотра товара
+        """
+        return reverse_lazy('catalog:product_detail', kwargs={'pk': self.object.pk})
+
+
+class ProductDeleteView(DeleteView):
+    """
+    Контроллер удаления продукта
+    """
+    model = Product
+    template_name = 'catalog/product_confirm_delete.html'
+    success_url = reverse_lazy('catalog:home')
+    context_object_name = 'product'
+
+
 class ContactsView(TemplateView):
     """
     Контроллер страницы контактов
@@ -38,7 +75,6 @@ class ContactsView(TemplateView):
 
         print(f"Получено сообщение от {name} ({email}): {message}")
 
-        # Добавляем контекст для отображения сообщения об успехе
         context = self.get_context_data()
         context['form_submitted'] = True
         return self.render_to_response(context)
