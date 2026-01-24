@@ -12,6 +12,9 @@ urlpatterns = [
 
     # Подключаем URLs приложения blog
     path('blogs/', include('blog.urls')),
+
+    # Подключаем URLs приложения users
+    path('users/', include('users.urls')),
 ]
 
 # Добавляем возможность отображать медиафайлы в режиме DEBUG

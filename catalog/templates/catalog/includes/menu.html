@@ -30,12 +30,27 @@
 
     <!-- Секция пользователя внизу -->
     <div class="user-section mt-auto">
-        <a class="nav-link" href="#">Профиль</a>
-        <a class="nav-link" href="#">Выход</a>
-        <div class="d-flex align-items-center mt-2">
-            <img src="https://via.placeholder.com/32" class="rounded-circle me-2" alt="Аватар">
-            <span>Пользователь</span>
-        </div>
+        {% if user.is_authenticated %}
+            <!-- Для авторизованных пользователей -->
+            <div class="mb-2">
+                <small class="text-muted">Вы вошли как:</small><br>
+                <strong>{{ user.email }}</strong>
+            </div>
+            <a class="nav-link" href="#">
+                <i class="bi bi-person-circle"></i> Профиль
+            </a>
+            <a class="nav-link" href="{% url 'users:logout' %}">
+                <i class="bi bi-box-arrow-right"></i> Выход
+            </a>
+        {% else %}
+            <!-- Для неавторизованных пользователей -->
+            <a class="nav-link" href="{% url 'users:login' %}">
+                <i class="bi bi-box-arrow-in-right"></i> Вход
+            </a>
+            <a class="nav-link" href="{% url 'users:register' %}">
+                <i class="bi bi-person-plus"></i> Регистрация
+            </a>
+        {% endif %}
     </div>
 
 </div>
