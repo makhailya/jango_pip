@@ -61,11 +61,20 @@
                         <ul class="list-unstyled">
                             <li><strong>ID:</strong> {{ product.id }}</li>
                             <li><strong>Категория:</strong> {{ product.category.name }}</li>
+                            <li><strong>Владелец:</strong> {{ product.owner.email|default:"Не указан" }}</li>
                             <li><strong>Дата добавления:</strong> {{ product.created_at|date:"d.m.Y H:i" }}</li>
                             <li><strong>Последнее обновление:</strong> {{ product.updated_at|date:"d.m.Y H:i" }}</li>
+                            <li>
+                                <strong>Статус:</strong>
+                                {% if product.is_published %}
+                                    <span class="badge bg-success">Опубликовано</span>
+                                {% else %}
+                                    <span class="badge bg-warning">Не опубликовано</span>
+                                {% endif %}
+                            </li>
                         </ul>
                     </div>
-                    
+
                     <!-- Кнопка покупки -->
                     <div class="d-grid gap-2">
                         <button class="btn btn-success btn-lg">
@@ -75,19 +84,44 @@
                             <i class="bi bi-heart"></i> В избранное
                         </button>
                     </div>
-                    
+
                     <!-- Кнопки управления товаром -->
-                    <div class="mt-3 pt-3 border-top">
-                        <h6 class="text-muted">Управление товаром:</h6>
-                        <div class="d-grid gap-2">
-                            <a href="{% url 'catalog:product_update' product.pk %}" class="btn btn-warning">
-                                <i class="bi bi-pencil"></i> Редактировать
-                            </a>
-                            <a href="{% url 'catalog:product_delete' product.pk %}" class="btn btn-outline-danger">
-                                <i class="bi bi-trash"></i> Удалить
-                            </a>
+                    {% if user.is_authenticated %}
+                        <div class="mt-3 pt-3 border-top">
+                            <h6 class="text-muted">Управление товаром:</h6>
+                            <div class="d-grid gap-2">
+                                <!-- Редактировать может только владелец -->
+                                {% if product.owner == user %}
+                                    <a href="{% url 'catalog:product_update' product.pk %}" class="btn btn-warning">
+                                        <i class="bi bi-pencil"></i> Редактировать
+                                    </a>
+                                {% endif %}
+
+                                <!-- Удалять может владелец или модератор -->
+                                {% if product.owner == user or perms.catalog.delete_product %}
+                                    <a href="{% url 'catalog:product_delete' product.pk %}" class="btn btn-outline-danger">
+                                        <i class="bi bi-trash"></i> Удалить
+                                    </a>
+                                {% endif %}
+
+                                <!-- Переключать публикацию может только модератор -->
+                                {% if perms.catalog.can_unpublish_product %}
+                                    <form method="post" action="{% url 'catalog:toggle_publish' product.pk %}">
+                                        {% csrf_token %}
+                                        {% if product.is_published %}
+                                            <button type="submit" class="btn btn-outline-warning w-100">
+                                                <i class="bi bi-eye-slash"></i> Снять с публикации
+                                            </button>
+                                        {% else %}
+                                            <button type="submit" class="btn btn-outline-success w-100">
+                                                <i class="bi bi-eye"></i> Опубликовать
+                                            </button>
+                                        {% endif %}
+                                    </form>
+                                {% endif %}
+                            </div>
                         </div>
-                    </div>
+                    {% endif %}
 
                 </div>
             </div>

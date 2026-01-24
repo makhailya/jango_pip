@@ -69,11 +69,28 @@ class Product(models.Model):
         auto_now=True,
         verbose_name='Дата последнего изменения'
     )
+    owner = models.ForeignKey(
+        'users.User',
+        on_delete=models.CASCADE,
+        verbose_name='Владелец',
+        help_text='Владелец продукта',
+        related_name='products',
+        blank=True,
+        null=True
+    )
+    is_published = models.BooleanField(
+        default=False,
+        verbose_name='Опубликовано',
+        help_text='Статус публикации продукта'
+    )
 
     class Meta:
         verbose_name = 'Продукт'
         verbose_name_plural = 'Продукты'
         ordering = ['-created_at']
+        permissions = [
+            ('can_unpublish_product', 'Может отменять публикацию продукта'),
+        ]
 
     def __str__(self):
         return self.name
