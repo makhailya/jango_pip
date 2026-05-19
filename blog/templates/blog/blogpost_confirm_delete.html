@@ -1,0 +1,47 @@
+{% extends 'catalog/base.html' %}
+
+{% block title %}Удаление статьи - Блог{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    
+    <!-- Кнопка "Назад" -->
+    <div class="mb-3">
+        <a href="{% url 'blog:detail' post.pk %}" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left"></i> Вернуться к статье
+        </a>
+    </div>
+    
+    <!-- Подтверждение удаления -->
+    <div class="card shadow-sm border-danger">
+        <div class="card-body p-4">
+            <h2 class="card-title text-danger mb-4">
+                <i class="bi bi-exclamation-triangle"></i> Подтверждение удаления
+            </h2>
+            
+            <p class="card-text">
+                Вы уверены, что хотите удалить статью 
+                <strong>"{{ post.title }}"</strong>?
+            </p>
+            
+            <div class="alert alert-warning" role="alert">
+                <strong>Внимание!</strong> Это действие невозможно отменить.
+            </div>
+            
+            <form method="post">
+                {% csrf_token %}
+                
+                <div class="d-grid gap-2 d-md-flex">
+                    <button type="submit" class="btn btn-danger">
+                        <i class="bi bi-trash"></i> Да, удалить
+                    </button>
+                    <a href="{% url 'blog:detail' post.pk %}" class="btn btn-secondary">
+                        <i class="bi bi-x-circle"></i> Отмена
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+</div>
+{% endblock %}

@@ -5,11 +5,11 @@ app_name = 'catalog'
 
 urlpatterns = [
     # Главная страница
-    path('', views.home, name='home'),
+    path('', views.HomeView.as_view(), name='home'),
 
     # Страница одного товара
-    path('product/<int:pk>/', views.product_detail, name='product_detail'),
+    path('product/<int:pk>/', views.ProductDetailView.as_view(), name='product_detail'),
 
     # Страница контактов
-    path('contacts/', views.contacts, name='contacts'),
+    path('contacts/', views.ContactsView.as_view(), name='contacts'),
 ]
