@@ -4,9 +4,14 @@
 
 {% block content %}
 <!-- Заголовок страницы -->
-<div class="text-center mb-5">
-    <h1 class="display-4">Наши товары</h1>
-    <p class="text-muted">Выберите товар из нашего каталога</p>
+<div class="d-flex justify-content-between align-items-center mb-5">
+    <div class="text-center flex-grow-1">
+        <h1 class="display-4">Наши товары</h1>
+        <p class="text-muted">Выберите товар из нашего каталога</p>
+    </div>
+    <a href="{% url 'catalog:product_create' %}" class="btn btn-success">
+        <i class="bi bi-plus-circle"></i> Добавить товар
+    </a>
 </div>
 
 <!-- Проверка наличия товаров -->
@@ -36,7 +41,7 @@
                         <!-- Описание (обрезанное до 100 символов) -->
                         <p class="card-text text-muted flex-grow-1">
                             {% if product.description %}
-                                {{ product.description|truncatewords:100 }}
+                                {{ product.description|truncatechars:100 }}
                             {% else %}
                                 Описание отсутствует
                             {% endif %}

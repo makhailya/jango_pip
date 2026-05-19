@@ -10,6 +10,15 @@ urlpatterns = [
     # Страница одного товара
     path('product/<int:pk>/', views.ProductDetailView.as_view(), name='product_detail'),
 
+    # Создание продукта
+    path('product/create/', views.ProductCreateView.as_view(), name='product_create'),
+
+    # Редактирование продукта
+    path('product/<int:pk>/update/', views.ProductUpdateView.as_view(), name='product_update'),
+
+    # Удаление продукта
+    path('product/<int:pk>/delete/', views.ProductDeleteView.as_view(), name='product_delete'),
+
     # Страница контактов
     path('contacts/', views.ContactsView.as_view(), name='contacts'),
 ]
