@@ -91,6 +91,28 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+# Настройки кеширования
+CACHE_ENABLED = os.getenv('CACHE_ENABLED', 'True') == 'True'
+
+if CACHE_ENABLED:
+    CACHES = {
+        'default': {
+            'BACKEND': 'django_redis.cache.RedisCache',
+            'LOCATION': os.getenv('REDIS_URL', 'redis://127.0.0.1:6379/1'),
+            'OPTIONS': {
+                'CLIENT_CLASS': 'django_redis.client.DefaultClient',
+            },
+            'KEY_PREFIX': 'shop',  # Префикс для ключей
+            'TIMEOUT': 300,  # Время жизни кеша по умолчанию (5 минут)
+        }
+    }
+else:
+    CACHES = {
+        'default': {
+            'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
+        }
+    }
+
 # Internationalization
 LANGUAGE_CODE = 'ru-ru'
 TIME_ZONE = 'Europe/Moscow'

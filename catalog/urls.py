@@ -10,6 +10,9 @@ urlpatterns = [
     # Страница одного товара
     path('product/<int:pk>/', views.ProductDetailView.as_view(), name='product_detail'),
 
+    # Продукты в категории
+    path('category/<int:pk>/', views.CategoryProductsView.as_view(), name='category_products'),
+
     # Создание продукта
     path('product/create/', views.ProductCreateView.as_view(), name='product_create'),
 

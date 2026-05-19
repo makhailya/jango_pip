@@ -1,17 +1,20 @@
-from django.db import models
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.views.generic import ListView, DetailView, TemplateView, CreateView, UpdateView, DeleteView
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.core.exceptions import PermissionDenied
-from .models import Product
+from django.utils.decorators import method_decorator
+from django.views.decorators.cache import cache_page
+from django.db import models
+from .models import Product, Category
 from .forms import ProductForm
+from .services import get_products_by_category, get_all_products, clear_product_cache
 
 
 class HomeView(ListView):
     """
     Контроллер главной страницы
-    Отображает список всех опубликованных продуктов
+    Использует низкоуровневое кеширование через сервисную функцию
     """
     model = Product
     template_name = 'catalog/home.html'
@@ -19,32 +22,29 @@ class HomeView(ListView):
 
     def get_queryset(self):
         """
-        Обычные пользователи видят только опубликованные продукты
-        Владельцы и модераторы видят все свои продукты
+        Используем сервисную функцию с кешированием
         """
-        queryset = Product.objects.all()
-
         # Если пользователь не авторизован, показываем только опубликованные
         if not self.request.user.is_authenticated:
-            return queryset.filter(is_published=True)
+            return get_all_products()
 
-        # Если пользователь авторизован, показываем:
-        # - Все опубликованные продукты
-        # - Свои неопубликованные продукты
-        # - Если модератор - все продукты
+        # Если авторизован, показываем опубликованные + свои
         user = self.request.user
         if user.groups.filter(name='Модераторы').exists() or user.is_superuser:
-            return queryset
+            return Product.objects.all()
 
-        return queryset.filter(
+        # Для обычных пользователей - опубликованные + свои
+        return Product.objects.filter(
             models.Q(is_published=True) | models.Q(owner=user)
         )
 
 
+@method_decorator(cache_page(60 * 15), name='dispatch')  # Кеш на 15 минут
 class ProductDetailView(DetailView):
     """
     Контроллер страницы одного товара
     Доступен всем пользователям для опубликованных товаров
+    Страница кешируется на 15 минут
     """
     model = Product
     template_name = 'catalog/product_detail.html'
@@ -73,6 +73,7 @@ class ProductCreateView(LoginRequiredMixin, CreateView):
     """
     Контроллер создания продукта
     Автоматически привязывает продукт к текущему пользователю
+    Очищает кеш после создания
     """
     model = Product
     form_class = ProductForm
@@ -84,13 +85,19 @@ class ProductCreateView(LoginRequiredMixin, CreateView):
         Автоматически устанавливаем владельца продукта
         """
         form.instance.owner = self.request.user
-        return super().form_valid(form)
+        response = super().form_valid(form)
+
+        # Очищаем кеш после создания продукта
+        clear_product_cache()
+
+        return response
 
 
 class ProductUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     """
     Контроллер редактирования продукта
     Доступен только владельцу продукта
+    Очищает кеш после изменения
     """
     model = Product
     form_class = ProductForm
@@ -103,6 +110,14 @@ class ProductUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
         product = self.get_object()
         return product.owner == self.request.user
 
+    def form_valid(self, form):
+        """
+        Очищаем кеш после изменения
+        """
+        response = super().form_valid(form)
+        clear_product_cache()
+        return response
+
     def get_success_url(self):
         """
         После редактирования перенаправляем на страницу просмотра товара
@@ -114,6 +129,7 @@ class ProductDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     """
     Контроллер удаления продукта
     Доступен владельцу и модераторам
+    Очищает кеш после удаления
     """
     model = Product
     template_name = 'catalog/product_confirm_delete.html'
@@ -140,6 +156,14 @@ class ProductDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
             return True
 
         return False
+
+    def form_valid(self, form):
+        """
+        Очищаем кеш после удаления
+        """
+        response = super().form_valid(form)
+        clear_product_cache()
+        return response
 
 
 class TogglePublishView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
@@ -187,3 +211,29 @@ class ContactsView(TemplateView):
         context = self.get_context_data()
         context['form_submitted'] = True
         return self.render_to_response(context)
+
+
+class CategoryProductsView(ListView):
+    """
+    Контроллер для отображения продуктов в категории
+    Использует сервисную функцию с кешированием
+    """
+    model = Product
+    template_name = 'catalog/category_products.html'
+    context_object_name = 'products'
+
+    def get_queryset(self):
+        """
+        Получаем продукты через сервисную функцию
+        """
+        category_id = self.kwargs.get('pk')
+        return get_products_by_category(category_id)
+
+    def get_context_data(self, **kwargs):
+        """
+        Добавляем категорию в контекст
+        """
+        context = super().get_context_data(**kwargs)
+        category_id = self.kwargs.get('pk')
+        context['category'] = Category.objects.get(pk=category_id)
+        return context
