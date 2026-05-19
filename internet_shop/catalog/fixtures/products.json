@@ -1,0 +1,54 @@
+[
+{
+  "model": "catalog.product",
+  "pk": 1,
+  "fields": {
+    "name": "Ноутбук ASUS",
+    "description": "Мощный ноутбук для работы и игр",
+    "image": "",
+    "category": 1,
+    "price": "72000.00",
+    "created_at": "2026-01-14T21:30:21.915Z",
+    "updated_at": "2026-01-14T21:30:21.933Z"
+  }
+},
+{
+  "model": "catalog.product",
+  "pk": 2,
+  "fields": {
+    "name": "Смартфон Samsung",
+    "description": "Современный смартфон с отличной камерой",
+    "image": "",
+    "category": 1,
+    "price": "45000.00",
+    "created_at": "2026-01-14T21:30:21.921Z",
+    "updated_at": "2026-01-14T21:30:21.921Z"
+  }
+},
+{
+  "model": "catalog.product",
+  "pk": 3,
+  "fields": {
+    "name": "Футболка Nike",
+    "description": "Спортивная футболка из качественных материалов",
+    "image": "",
+    "category": 2,
+    "price": "2500.00",
+    "created_at": "2026-01-14T21:30:21.923Z",
+    "updated_at": "2026-01-14T21:30:21.923Z"
+  }
+},
+{
+  "model": "catalog.product",
+  "pk": 4,
+  "fields": {
+    "name": "Джинсы Levi's",
+    "description": "Классические джинсы",
+    "image": "",
+    "category": 2,
+    "price": "5500.00",
+    "created_at": "2026-01-14T21:30:21.923Z",
+    "updated_at": "2026-01-14T21:30:21.923Z"
+  }
+}
+]

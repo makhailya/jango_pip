@@ -1,0 +1,106 @@
+{% extends 'catalog/base.html' %}
+
+{% block title %}Удаление товара - Интернет-магазин{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+
+    <!-- Кнопка "Назад" -->
+    <div class="mb-3">
+        <a href="{% url 'catalog:product_detail' product.pk %}" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left"></i> Вернуться к товару
+        </a>
+    </div>
+
+    <!-- Подтверждение удаления -->
+    <div class="card shadow-sm border-danger">
+        <div class="card-body p-4">
+            <h2 class="card-title text-danger mb-4">
+                <i class="bi bi-exclamation-triangle"></i> Подтверждение удаления
+            </h2>
+
+            <!-- Информация о товаре -->
+            <div class="card mb-3">
+                <div class="row g-0">
+                    {% if product.image %}
+                        <div class="col-md-4">
+                            <img src="{{ product.image.url }}" class="img-fluid rounded-start" alt="{{ product.name }}">
+                        </div>
+                    {% endif %}
+                    <div class="col-md-8">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ product.name }}</h5>
+                            <p class="card-text">
+                                <strong>Категория:</strong> {{ product.category.name }}<br>
+                                <strong>Цена:</strong> {{ product.price }} ₽
+                            </p>
+                            <p class="card-text">
+                                <small class="text-muted">
+                                    Создан: {{ product.created_at|date:"d.m.Y H:i" }}
+                                </small>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <p class="card-text">
+                Вы уверены, что хотите удалить товар
+                <strong>"{{ product.name }}"</strong>?
+            </p>
+
+            <div class="alert alert-warning" role="alert">
+                <strong><i class="bi bi-exclamation-triangle"></i> Внимание!</strong>
+                Это действие невозможно отменить. Товар будет удалён навсегда.
+            </div>
+
+            <form method="post">
+                {% csrf_token %}
+
+                <div class="d-grid gap-2 d-md-flex">
+                    <button type="submit" class="btn btn-danger">
+                        <i class="bi bi-trash"></i> Да, удалить товар
+                    </button>
+                    <a href="{% url 'catalog:product_detail' product.pk %}" class="btn btn-secondary">
+                        <i class="bi bi-x-circle"></i> Отмена
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Дополнительные действия (только для авторизованных) -->
+    {% if user.is_authenticated %}
+        <div class="card shadow-sm mt-3">
+            <div class="card-body p-4">
+                <h6 class="text-muted mb-3">Другие действия с товаром:</h6>
+                <div class="d-grid gap-2">
+                    <!-- Редактировать может только владелец -->
+                    {% if product.owner == user %}
+                        <a href="{% url 'catalog:product_update' product.pk %}" class="btn btn-warning">
+                            <i class="bi bi-pencil"></i> Редактировать товар
+                        </a>
+                    {% endif %}
+
+                    <!-- Переключать публикацию может только модератор -->
+                    {% if perms.catalog.can_unpublish_product %}
+                        <form method="post" action="{% url 'catalog:toggle_publish' product.pk %}">
+                            {% csrf_token %}
+                            {% if product.is_published %}
+                                <button type="submit" class="btn btn-outline-warning w-100">
+                                    <i class="bi bi-eye-slash"></i> Снять с публикации
+                                </button>
+                            {% else %}
+                                <button type="submit" class="btn btn-outline-success w-100">
+                                    <i class="bi bi-eye"></i> Опубликовать
+                                </button>
+                            {% endif %}
+                        </form>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    {% endif %}
+
+</div>
+{% endblock %}

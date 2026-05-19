@@ -1,0 +1,133 @@
+{% extends 'catalog/base.html' %}
+
+{% block title %}{{ product.name }} - Интернет-магазин{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    
+    <!-- Кнопка "Назад" -->
+    <div class="mb-3">
+        <a href="{% url 'catalog:home' %}" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left"></i> Вернуться к товарам
+        </a>
+    </div>
+    
+    <!-- Карточка товара -->
+    <div class="card shadow-sm">
+        <div class="row g-0">
+            
+            <!-- Изображение товара -->
+            <div class="col-md-5">
+                {% if product.image %}
+                    <img src="{{ product.image.url }}" class="img-fluid rounded-start" alt="{{ product.name }}" style="height: 100%; object-fit: cover;">
+                {% else %}
+                    <div class="bg-secondary text-white d-flex align-items-center justify-content-center rounded-start" style="height: 400px;">
+                        <div class="text-center">
+                            <i class="bi bi-image" style="font-size: 4rem;"></i>
+                            <p class="mt-2">Нет изображения</p>
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+            
+            <!-- Информация о товаре -->
+            <div class="col-md-7">
+                <div class="card-body p-4">
+                    
+                    <!-- Категория -->
+                    <span class="badge bg-primary mb-2">{{ product.category.name }}</span>
+                    
+                    <!-- Название -->
+                    <h1 class="card-title mb-3">{{ product.name }}</h1>
+                    
+                    <!-- Цена -->
+                    <h2 class="text-success mb-4">{{ product.price }} ₽</h2>
+                    
+                    <!-- Описание -->
+                    <div class="mb-4">
+                        <h5>Описание:</h5>
+                        <p class="card-text">
+                            {% if product.description %}
+                                {{ product.description }}
+                            {% else %}
+                                <span class="text-muted">Описание отсутствует</span>
+                            {% endif %}
+                        </p>
+                    </div>
+                    
+                    <!-- Дополнительная информация -->
+                    <div class="border-top pt-3 mb-4">
+                        <h5>Информация:</h5>
+                        <ul class="list-unstyled">
+                            <li><strong>ID:</strong> {{ product.id }}</li>
+                            <li><strong>Категория:</strong> {{ product.category.name }}</li>
+                            <li><strong>Владелец:</strong> {{ product.owner.email|default:"Не указан" }}</li>
+                            <li><strong>Дата добавления:</strong> {{ product.created_at|date:"d.m.Y H:i" }}</li>
+                            <li><strong>Последнее обновление:</strong> {{ product.updated_at|date:"d.m.Y H:i" }}</li>
+                            <li>
+                                <strong>Статус:</strong>
+                                {% if product.is_published %}
+                                    <span class="badge bg-success">Опубликовано</span>
+                                {% else %}
+                                    <span class="badge bg-warning">Не опубликовано</span>
+                                {% endif %}
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- Кнопка покупки -->
+                    <div class="d-grid gap-2">
+                        <button class="btn btn-success btn-lg">
+                            <i class="bi bi-cart-plus"></i> Добавить в корзину
+                        </button>
+                        <button class="btn btn-outline-primary">
+                            <i class="bi bi-heart"></i> В избранное
+                        </button>
+                    </div>
+
+                    <!-- Кнопки управления товаром -->
+                    {% if user.is_authenticated %}
+                        <div class="mt-3 pt-3 border-top">
+                            <h6 class="text-muted">Управление товаром:</h6>
+                            <div class="d-grid gap-2">
+                                <!-- Редактировать может только владелец -->
+                                {% if product.owner == user %}
+                                    <a href="{% url 'catalog:product_update' product.pk %}" class="btn btn-warning">
+                                        <i class="bi bi-pencil"></i> Редактировать
+                                    </a>
+                                {% endif %}
+
+                                <!-- Удалять может владелец или модератор -->
+                                {% if product.owner == user or perms.catalog.delete_product %}
+                                    <a href="{% url 'catalog:product_delete' product.pk %}" class="btn btn-outline-danger">
+                                        <i class="bi bi-trash"></i> Удалить
+                                    </a>
+                                {% endif %}
+
+                                <!-- Переключать публикацию может только модератор -->
+                                {% if perms.catalog.can_unpublish_product %}
+                                    <form method="post" action="{% url 'catalog:toggle_publish' product.pk %}">
+                                        {% csrf_token %}
+                                        {% if product.is_published %}
+                                            <button type="submit" class="btn btn-outline-warning w-100">
+                                                <i class="bi bi-eye-slash"></i> Снять с публикации
+                                            </button>
+                                        {% else %}
+                                            <button type="submit" class="btn btn-outline-success w-100">
+                                                <i class="bi bi-eye"></i> Опубликовать
+                                            </button>
+                                        {% endif %}
+                                    </form>
+                                {% endif %}
+                            </div>
+                        </div>
+                    {% endif %}
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</div>
+{% endblock %}

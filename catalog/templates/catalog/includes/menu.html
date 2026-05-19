@@ -1,0 +1,56 @@
+<!-- Боковое меню навигации -->
+<div class="col-md-2 col-lg-2 sidebar p-3 d-flex flex-column">
+
+    <!-- Логотип -->
+    <div class="mb-4">
+        <h4>
+            <span class="badge bg-light text-dark">B</span>
+            Меню
+        </h4>
+    </div>
+
+    <!-- Навигационное меню -->
+    <nav class="nav flex-column">
+        <a class="nav-link {% if request.resolver_match.url_name == 'home' %}active{% endif %}" href="{% url 'catalog:home' %}">
+            <i class="bi bi-house-door"></i> Главная
+        </a>
+        <a class="nav-link {% if 'blog' in request.resolver_match.namespace %}active{% endif %}" href="{% url 'blog:list' %}">
+            <i class="bi bi-newspaper"></i> Блог
+        </a>
+        <a class="nav-link {% if request.resolver_match.url_name == 'categories' %}active{% endif %}" href="#">
+            <i class="bi bi-grid"></i> Категории
+        </a>
+        <a class="nav-link {% if request.resolver_match.url_name == 'orders' %}active{% endif %}" href="#">
+            <i class="bi bi-cart"></i> Заказы
+        </a>
+        <a class="nav-link {% if request.resolver_match.url_name == 'contacts' %}active{% endif %}" href="{% url 'catalog:contacts' %}">
+            <i class="bi bi-person"></i> Контакты
+        </a>
+    </nav>
+
+    <!-- Секция пользователя внизу -->
+    <div class="user-section mt-auto">
+        {% if user.is_authenticated %}
+            <!-- Для авторизованных пользователей -->
+            <div class="mb-2">
+                <small class="text-muted">Вы вошли как:</small><br>
+                <strong>{{ user.email }}</strong>
+            </div>
+            <a class="nav-link" href="#">
+                <i class="bi bi-person-circle"></i> Профиль
+            </a>
+            <a class="nav-link" href="{% url 'users:logout' %}">
+                <i class="bi bi-box-arrow-right"></i> Выход
+            </a>
+        {% else %}
+            <!-- Для неавторизованных пользователей -->
+            <a class="nav-link" href="{% url 'users:login' %}">
+                <i class="bi bi-box-arrow-in-right"></i> Вход
+            </a>
+            <a class="nav-link" href="{% url 'users:register' %}">
+                <i class="bi bi-person-plus"></i> Регистрация
+            </a>
+        {% endif %}
+    </div>
+
+</div>

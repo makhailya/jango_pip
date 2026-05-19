@@ -1,0 +1,172 @@
+{% extends 'catalog/base.html' %}
+
+{% block title %}
+    {% if object %}Редактирование товара{% else %}Новый товар{% endif %} - Интернет-магазин
+{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    
+    <!-- Кнопка "Назад" -->
+    <div class="mb-3">
+        <a href="{% url 'catalog:home' %}" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left"></i> Вернуться к товарам
+        </a>
+    </div>
+    
+    <!-- Форма -->
+    <div class="card shadow-sm">
+        <div class="card-body p-4">
+            <h2 class="card-title mb-4">
+                {% if object %}
+                    <i class="bi bi-pencil"></i> Редактирование товара
+                {% else %}
+                    <i class="bi bi-plus-circle"></i> Создание нового товара
+                {% endif %}
+            </h2>
+            
+            <!-- Общие ошибки формы -->
+            {% if form.non_field_errors %}
+                <div class="alert alert-danger">
+                    {{ form.non_field_errors }}
+                </div>
+            {% endif %}
+            
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                
+                <!-- Название -->
+                <div class="mb-3">
+                    <label for="{{ form.name.id_for_label }}" class="form-label">
+                        <strong>Название товара</strong> <span class="text-danger">*</span>
+                    </label>
+                    {{ form.name }}
+                    {% if form.name.errors %}
+                        <div class="text-danger mt-1">
+                            {% for error in form.name.errors %}
+                                <small><i class="bi bi-exclamation-circle"></i> {{ error }}</small><br>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                    <small class="form-text text-muted">
+                        Введите название товара (избегайте запрещённых слов)
+                    </small>
+                </div>
+                
+                <!-- Описание -->
+                <div class="mb-3">
+                    <label for="{{ form.description.id_for_label }}" class="form-label">
+                        <strong>Описание</strong>
+                    </label>
+                    {{ form.description }}
+                    {% if form.description.errors %}
+                        <div class="text-danger mt-1">
+                            {% for error in form.description.errors %}
+                                <small><i class="bi bi-exclamation-circle"></i> {{ error }}</small><br>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                    <small class="form-text text-muted">
+                        Подробное описание товара (избегайте запрещённых слов)
+                    </small>
+                </div>
+                
+                <!-- Изображение -->
+                <div class="mb-3">
+                    <label for="{{ form.image.id_for_label }}" class="form-label">
+                        <strong>Изображение</strong>
+                    </label>
+                    {{ form.image }}
+                    {% if form.image.errors %}
+                        <div class="text-danger mt-1">
+                            {% for error in form.image.errors %}
+                                <small><i class="bi bi-exclamation-circle"></i> {{ error }}</small><br>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                    {% if object.image %}
+                        <div class="mt-2">
+                            <p class="mb-1">Текущее изображение:</p>
+                            <img src="{{ object.image.url }}" alt="{{ object.name }}" class="img-thumbnail" style="max-height: 150px;">
+                        </div>
+                    {% endif %}
+                </div>
+                
+                <!-- Категория -->
+                <div class="mb-3">
+                    <label for="{{ form.category.id_for_label }}" class="form-label">
+                        <strong>Категория</strong> <span class="text-danger">*</span>
+                    </label>
+                    {{ form.category }}
+                    {% if form.category.errors %}
+                        <div class="text-danger mt-1">
+                            {% for error in form.category.errors %}
+                                <small><i class="bi bi-exclamation-circle"></i> {{ error }}</small><br>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+                
+                <!-- Цена -->
+                <div class="mb-3">
+                    <label for="{{ form.price.id_for_label }}" class="form-label">
+                        <strong>Цена (₽)</strong> <span class="text-danger">*</span>
+                    </label>
+                    {{ form.price }}
+                    {% if form.price.errors %}
+                        <div class="text-danger mt-1">
+                            {% for error in form.price.errors %}
+                                <small><i class="bi bi-exclamation-circle"></i> {{ error }}</small><br>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                    <small class="form-text text-muted">
+                        Укажите цену товара (только положительные значения)
+                    </small>
+                </div>
+
+                <!-- Опубликовано -->
+                <div class="mb-4">
+                    <div class="form-check">
+                        {{ form.is_published }}
+                        <label class="form-check-label" for="{{ form.is_published.id_for_label }}">
+                            Опубликовать товар
+                        </label>
+                    </div>
+                    {% if form.is_published.errors %}
+                        <div class="text-danger mt-1">
+                            {% for error in form.is_published.errors %}
+                                <small><i class="bi bi-exclamation-circle"></i> {{ error }}</small><br>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                    <small class="form-text text-muted">
+                        Снимите галочку, чтобы сохранить как черновик
+                    </small>
+                </div>
+
+                <!-- Информационный блок -->
+                <div class="alert alert-info">
+                    <strong><i class="bi bi-info-circle"></i> Важно!</strong>
+                    <ul class="mb-0 mt-2">
+                        <li>Поля со звёздочкой (<span class="text-danger">*</span>) обязательны для заполнения</li>
+                        <li>Запрещено использовать слова: казино, криптовалюта, крипта, биржа, дешево, бесплатно, обман, полиция, радар</li>
+                        <li>Цена не может быть отрицательной</li>
+                    </ul>
+                </div>
+
+                <!-- Кнопки -->
+                <div class="d-grid gap-2 d-md-flex">
+                    <button type="submit" class="btn btn-success">
+                        <i class="bi bi-check-circle"></i> Сохранить
+                    </button>
+                    <a href="{% url 'catalog:home' %}" class="btn btn-secondary">
+                        <i class="bi bi-x-circle"></i> Отмена
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+</div>
+{% endblock %}
