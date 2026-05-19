@@ -19,6 +19,9 @@ urlpatterns = [
     # Удаление продукта
     path('product/<int:pk>/delete/', views.ProductDeleteView.as_view(), name='product_delete'),
 
+    # Переключение публикации (для модераторов)
+    path('product/<int:pk>/toggle-publish/', views.TogglePublishView.as_view(), name='toggle_publish'),
+
     # Страница контактов
     path('contacts/', views.ContactsView.as_view(), name='contacts'),
 ]
