@@ -1,14 +1,15 @@
 from django.urls import path
 from . import views
 
-# Это пространство имён для приложения
-# Позволяет использовать {% url 'catalog:home' %} в шаблонах
 app_name = 'catalog'
 
 urlpatterns = [
-    # Главная страница: /
+    # Главная страница
     path('', views.home, name='home'),
 
-    # Страница контактов: /contacts/
+    # Страница одного товара
+    path('product/<int:pk>/', views.product_detail, name='product_detail'),
+
+    # Страница контактов
     path('contacts/', views.contacts, name='contacts'),
 ]

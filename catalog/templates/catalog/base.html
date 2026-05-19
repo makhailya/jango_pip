@@ -12,6 +12,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
 
     <style>
+        /* Стили для бокового меню */
         .sidebar {
             min-height: 100vh;
             background-color: #212529;
@@ -40,6 +41,12 @@
             padding-top: 1rem;
             margin-top: auto;
         }
+
+        /* Убираем отступы у body */
+        body {
+            margin: 0;
+            padding: 0;
+        }
     </style>
 
     {% block extra_css %}{% endblock %}
@@ -49,41 +56,8 @@
 <div class="container-fluid">
     <div class="row">
 
-        <!-- БОКОВОЕ МЕНЮ -->
-        <div class="col-md-2 col-lg-2 sidebar p-3 d-flex flex-column">
-
-            <div class="mb-4">
-                <h4>
-                    <span class="badge bg-light text-dark">B</span>
-                    Меню
-                </h4>
-            </div>
-
-            <nav class="nav flex-column">
-                <a class="nav-link {% if request.resolver_match.url_name == 'home' %}active{% endif %}" href="{% url 'catalog:home' %}">
-                    <i class="bi bi-house-door"></i> Главная
-                </a>
-                <a class="nav-link {% if request.resolver_match.url_name == 'categories' %}active{% endif %}" href="#">
-                    <i class="bi bi-grid"></i> Категории
-                </a>
-                <a class="nav-link {% if request.resolver_match.url_name == 'orders' %}active{% endif %}" href="#">
-                    <i class="bi bi-cart"></i> Заказы
-                </a>
-                <a class="nav-link {% if request.resolver_match.url_name == 'contacts' %}active{% endif %}" href="{% url 'catalog:contacts' %}">
-                    <i class="bi bi-person"></i> Контакты
-                </a>
-            </nav>
-
-            <div class="user-section mt-auto">
-                <a class="nav-link" href="#">Профиль</a>
-                <a class="nav-link" href="#">Выход</a>
-                <div class="d-flex align-items-center mt-2">
-                    <img src="https://via.placeholder.com/32" class="rounded-circle me-2" alt="Аватар">
-                    <span>Пользователь</span>
-                </div>
-            </div>
-
-        </div>
+        <!-- БОКОВОЕ МЕНЮ (подключаем подшаблон) -->
+        {% include 'catalog/includes/menu.html' %}
 
         <!-- ОСНОВНОЙ КОНТЕНТ -->
         <div class="col-md-10 col-lg-10 p-4">
